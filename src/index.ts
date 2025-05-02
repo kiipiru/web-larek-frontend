@@ -81,9 +81,7 @@ events.on('page:initialized', () => {
 			cardsData.items = items;
 			events.emit('initialData:loaded');
 		})
-		.catch((err) => {
-			console.log(err);
-		});
+		.catch(console.error)
 });
 
 const page = new Page(document.body, events);
@@ -107,9 +105,9 @@ events.on('modal:close', () => {
 
 events.on('item:select', (payload: { item: ItemCard }) => {
 	if (itemsBasket.items.has(payload.item.id)) {
-		modalItem.basketButton.textContent = 'Убрать из корзины';
+		modalItem.basketButtonText = 'Убрать из корзины';
 	} else {
-		modalItem.basketButton.textContent = 'В корзину';
+		modalItem.basketButtonText = 'В корзину';
 	}
 	modalItem.render(cardsData.getCard(payload.item.id));
 });
@@ -117,10 +115,10 @@ events.on('item:select', (payload: { item: ItemCard }) => {
 events.on('basketButton:click', (data: { id: string }) => {
 	if (!itemsBasket.items.has(data.id)) {
 		itemsBasket.addItem(data.id);
-		modalItem.basketButton.textContent = 'Убрать из корзины';
+		modalItem.basketButtonText = 'Убрать из корзины';
 	} else {
 		itemsBasket.deleteItem(data.id);
-		modalItem.basketButton.textContent = 'В корзину';
+		modalItem.basketButtonText = 'В корзину';
 	}
 });
 
@@ -131,7 +129,7 @@ events.on('basket:change', (data: { items: string[] }) => {
 		(sum, card) => sum + card.price,
 		0
 	);
-    modalBasket.orderButton.disabled = (itemsBasket.items.size === 0);
+    modalBasket.disableOrderButton((itemsBasket.items.size === 0));
 });
 
 events.on('basketitem:deleted', (payload: { id: string }) => {
@@ -150,14 +148,12 @@ events.on('bids:open', () => {
 events.on('orderbutton:clicked', () => {
 	orderModel.total = itemsBasket.totalPrice;
 	modalOrder.render({payment: orderModel.payment, address: orderModel.address});
-	orderModel.items = Array.from(itemsBasket.items.keys());
-	console.log(orderModel.items);
+	orderModel.items = Array.from(itemsBasket.items.keys()); 
 	events.emit('order:updated', orderModel);
 });
 
 events.on('paymentmethod:set', (data: { payment: PaymentMethod }) => {
 	orderModel.payment = data.payment;
-	console.log(orderModel.payment);
 });
 
 events.on('address:input', (data: { address: string }) => {
@@ -192,14 +188,14 @@ events.on('order:updated', (data: Partial<IOrder>) => {
 		});
 	if (modalOrder.proceedButton) {
 		const validOrder = isPaymentSet && isAddressSet;
-		modalOrder.proceedButton.disabled = !validOrder;
+		modalOrder.disableProceedButton(!validOrder);
 		modalOrder.errorSpan = validOrder
 			? ''
 			: 'Необходимо заполнить все поля формы';
 	}
 	if (modalContacts.submitOrderButton) {
 		const validOrder = isEmailSet && isPhoneSet;
-		modalContacts.submitOrderButton.disabled = !validOrder;
+		modalContacts.disableSubmitOrderButton(!validOrder);
 		modalContacts.errorSpan = validOrder
 			? ''
 			: 'Необходимо заполнить все поля формы';
@@ -220,9 +216,7 @@ events.on('order:submited', () => {
             modalContacts.getInputs().forEach((el) => {el.value = ''})
     items.forEach((item) => itemsBasket.deleteItem(item))
 		})
-		.catch((err) => {
-			console.log(err);
-		});
+		.catch(console.error)
 });
 
 events.on('order:close', () => {

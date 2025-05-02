@@ -123,6 +123,9 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `Api`
 Содержит базовую логику отправки HTTP-запросов.
 
+**Конструктор:**
+- `constructor(baseUrl: string, options: RequestInit = {})` - принимает базовый URL сервера для HTTP-запросов и глобальные опции для всех запросов (опционально).
+
 **Поля:**
 - `baseUrl: string` — Базовый URL сервера для запросов.
 - `options: RequestInit` — Настройки запросов, включая заголовки.
@@ -139,9 +142,18 @@ export type PaymentMethod = 'card' | 'cash';
     - `method: ApiPostMethods` — метод запроса ('POST', 'PUT', 'DELETE').
   - **Возвращает:** `Promise<object>` — промис с ответом сервера.
   - **Описание:** Выполняет запрос с указанным методом и данными в формате JSON.
+  - `handleResponse(response: Response): Promise<object>`
+  - **Параметры:**
+    - `response: Response` — объект ответа, полученный из HTTP-запроса.
+  - **Возвращает:** `Promise<object>` — промис с ответом сервера.
+  - **Описание:** При успешном ответе разрешает промис с объектом JSON, а в случае ошибки отклоняет его и выводит соответствующее сообщение.
+
 
 #### Класс `EventEmitter`
 Брокер событий для генерации и обработки событий в системе.
+
+**Конструктор:**
+`constructor()` - не принимает параметров.
 
 **Поля:**
 - `_events: Map<EventName, Set<Subscriber>>` — Карта событий и их подписчиков.
@@ -186,15 +198,22 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `ItemsData`
 Отвечает за хранение и управление данными товаров.
 
+**Конструктор:**
+`constructor(data: Partial<IItemsData>, events: IEvents)` - принимает частичные данные модели товаров (соответствующие интерфейсу IItemsData) и экземпляр брокера событий (IEvents).
+
 **Поля:**
 - `_items: IItem[]` — Массив объектов товаров.
 - `events: IEvents` — Экземпляр брокера событий для уведомления об изменениях.
 
 **Методы:**
+- `protected _changed(): void`
+  - **Параметры:** Нет.
+  - **Возвращает:** `void`
+  - **Описание:** Инициирует событие `items:changed`.
 - `set items(items: IItem[]): void`
   - **Параметры:** `items: IItem[]` — массив товаров.
   - **Возвращает:** `void`
-  - **Описание:** Устанавливает новый список товаров и инициирует событие `items:changed`.
+  - **Описание:** Устанавливает новый список товаров и применяет метод _changed `items:changed`.
 - `get items(): IItem[]`
   - **Параметры:** Нет.
   - **Возвращает:** `IItem[]` — текущий массив товаров.
@@ -206,6 +225,9 @@ export type PaymentMethod = 'card' | 'cash';
 
 #### Класс `ItemsBasket`
 Управляет содержимым корзины покупок.
+
+**Конструктор:**
+`constructor(data: Partial<IBasket>, events: IEvents)` - принимает частичные данные модели корзины (соответствующие интерфейсу IBasket) и экземпляр брокера событий (IEvents).
 
 **Поля:**
 - `_items: Map<string, number>` — Карта товаров с количеством (ID товара и количество).
@@ -240,6 +262,9 @@ export type PaymentMethod = 'card' | 'cash';
 
 #### Класс `Order`
 Управляет данными заказа.
+
+**Конструктор:**
+`constructor(data: Partial<IOrder>, events: IEvents)` - принимает частичные данные модели заказа (соответствующие интерфейсу IOrder) и экземпляр брокера событий (IEvents).
 
 **Поля:**
 - `_payment: PaymentMethod` — Способ оплаты (карта или наличные).
@@ -309,6 +334,9 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `Component<T>`
 Базовый класс для компонентов представления, работающих с DOM.
 
+**Конструктор:**
+`constructor(container: HTMLElement)` - принимает корневой DOM-элемент, с которым будет работать компонент.
+
 **Поля:**
 - `container: HTMLElement` — Корневой DOM-элемент компонента.
 
@@ -355,6 +383,9 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `Modal<T>`
 Базовый класс для модальных окон.
 
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents, modalContent: HTMLElement)` - принимает корневой DOM-элемент модального окна, экземпляр брокера событий (IEvents) и DOM-элемент содержимого модального окна.
+
 **Поля:**
 - `modal: HTMLElement` — Элемент модального окна.
 - `events: IEvents` — Экземпляр брокера событий.
@@ -382,6 +413,9 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `ModalWithItem`
 Модальное окно для отображения информации о товаре.
 
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents, cardTemplate: HTMLElement)` - принимает корневой DOM-элемент модального окна для отображения информации о товаре, экземпляр брокера событий (IEvents) и DOM-элемент шаблона содержимого с информацией о товаре.
+
 **Поля:**
 - `_itemImage: HTMLImageElement` — Элемент изображения товара.
 - `_itemCategory: HTMLSpanElement` — Элемент категории товара.
@@ -390,7 +424,6 @@ export type PaymentMethod = 'card' | 'cash';
 - `_itemPrice: HTMLSpanElement` — Элемент цены товара.
 - `_basketButton: HTMLButtonElement` — Кнопка добавления/удаления из корзины.
 - `itemId: string` — Идентификатор товара.
-- `_handleBasketButton: Function` — Обработчик клика по кнопке корзины.
 
 **Методы:**
 - `set image(img: string): void`
@@ -417,17 +450,20 @@ export type PaymentMethod = 'card' | 'cash';
   - **Параметры:** `id: string` — идентификатор товара.
   - **Возвращает:** `void`
   - **Описание:** Устанавливает ID товара.
+- `set basketButtonText(text: string): void`
+  - **Параметры:** `text: string` — текст для кнопки.
+  - **Возвращает:** `void`
+  - **Описание:** Устанавливает в карточке с товаром.
 - `get id(): string`
   - **Параметры:** Нет.
   - **Возвращает:** `string` — идентификатор товара.
   - **Описание:** Возвращает ID товара.
-- `get basketButton(): HTMLButtonElement`
-  - **Параметры:** Нет.
-  - **Возвращает:** `HTMLButtonElement` — кнопка корзины.
-  - **Описание:** Возвращает кнопку добавления/удаления из корзины.
 
 #### Класс `ModalWithBasket`
 Модальное окно для отображения корзины.
+
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents, basketTemplate: HTMLElement, cardInBasketTemplate: HTMLElement)` - принимает корневой DOM-элемент модального окна корзины, экземпляр брокера событий (IEvents), DOM-элемент шаблона содержимого корзины и DOM-элемент шаблона карточки товара в корзине.
 
 **Поля:**
 - `_cardInBasketTemplate: HTMLElement` — Шаблон для элемента товара в корзине.
@@ -436,18 +472,20 @@ export type PaymentMethod = 'card' | 'cash';
 - `_itemTitle: HTMLSpanElement` — Элемент заголовка товара.
 - `_itemPrice: HTMLSpanElement` — Элемент цены товара.
 - `_itemDeleteButton: HTMLButtonElement` — Кнопка удаления товара.
-- `_modalTitle: HTMLElement` — Заголовок модального окна.
 - `_basketList: HTMLUListElement` — Список товаров в корзине.
 - `_orderButton: HTMLButtonElement` — Кнопка оформления заказа.
 - `_basketPrice: HTMLSpanElement` — Элемент общей стоимости.
 - `_items: IItem[]` — Массив товаров в корзине.
-- `_handleDeleteItem: Function` — Обработчик удаления товара.
 
 **Методы:**
 - `set items(items: IItem[]): void`
   - **Параметры:** `items: IItem[]` — массив товаров.
   - **Возвращает:** `void`
   - **Описание:** Рендерит список товаров в корзине.
+- `disableOrderButton(state: boolean)`
+  - **Параметры:** `state: boolean` — требуемое состояние кнопки.
+  - **Возвращает:** `void`
+  - **Описание:** Активирует и деактивирует кнопку оформления заказа.
 - `handleTotalPrice(totalPrice: number | null): void`
   - **Параметры:** `totalPrice: number | null` — общая стоимость.
   - **Возвращает:** `void`
@@ -466,8 +504,10 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `ModalWithOrder`
 Модальное окно для ввода способа оплаты и адреса.
 
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents, orderTemplate: HTMLElement)` - принимает корневой DOM-элемент модального окна оформления заказа, экземпляр брокера событий (IEvents) и DOM-элемент шаблона содержимого оформления заказа.
+
 **Поля:**
-- `_modalTitle: HTMLElement` — Заголовок модального окна.
 - `_paymentMethod: PaymentMethod` — Текущий способ оплаты.
 - `_paymentByCardButton: HTMLButtonElement` — Кнопка оплаты картой.
 - `_paymentByCashButton: HTMLButtonElement` — Кнопка оплаты наличными.
@@ -498,6 +538,10 @@ export type PaymentMethod = 'card' | 'cash';
   - **Параметры:** Нет.
   - **Возвращает:** `HTMLButtonElement` — кнопка продолжения.
   - **Описание:** Возвращает кнопку продолжения.
+- `disableProceedButton(state: boolean)`
+  - **Параметры:** `state: boolean` — требуемое состояние кнопки.
+  - **Возвращает:** `void`
+  - **Описание:** Активирует и деактивирует кнопку "далее".
 - `addActiveClass(button: HTMLButtonElement): void`
   - **Параметры:** `button: HTMLButtonElement` — целевая кнопка.
   - **Возвращает:** `void`
@@ -510,8 +554,10 @@ export type PaymentMethod = 'card' | 'cash';
 #### Класс `ModalWithContactInfo`
 Модальное окно для ввода контактных данных.
 
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents, orderTemplate: HTMLElement)` - принимает корневой DOM-элемент модального окна для ввода контактных данных, экземпляр брокера событий (IEvents) и DOM-элемент шаблона содержимого контактных данных.
+
 **Поля:**
-- `_modalTitle: HTMLElement` — Заголовок модального окна.
 - `_emailInput: HTMLInputElement` — Поле ввода email.
 - `_phoneInput: HTMLInputElement` — Поле ввода телефона.
 - `_submitOrderButton: HTMLButtonElement` — Кнопка отправки заказа.
@@ -526,9 +572,16 @@ export type PaymentMethod = 'card' | 'cash';
   - **Параметры:** `text: string` — текст ошибки.
   - **Возвращает:** `void`
   - **Описание:** Устанавливает текст ошибки.
+  - `disableSubmitOrderButton(state: boolean)`
+  - **Параметры:** `state: boolean` — требуемое состояние кнопки.
+  - **Возвращает:** `void`
+  - **Описание:** Активирует и деактивирует кнопку "оплатить".
 
 #### Класс `ModalWithSuccess`
 Модальное окно для подтверждения успешного заказа.
+
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents, successTemplate: HTMLElement)` - принимает корневой DOM-элемент модального окна успешного заказа, экземпляр брокера событий (IEvents) и DOM-элемент шаблона содержимого успешного заказа.
 
 **Поля:**
 - `_totalPrice: HTMLElement` — Элемент для отображения суммы списания.
@@ -572,10 +625,6 @@ export type PaymentMethod = 'card' | 'cash';
   - **Параметры:** `imageUrl: string` — URL изображения.
   - **Возвращает:** `void`
   - **Описание:** Устанавливает изображение товара.
-- `set imageAlt(alt: string): void`
-  - **Параметры:** `alt: string` — альтернативный текст.
-  - **Возвращает:** `void`
-  - **Описание:** Устанавливает alt-текст изображения.
 - `set price(price: number | null): void`
   - **Параметры:** `price: number | null` — цена товара.
   - **Возвращает:** `void`
@@ -583,6 +632,9 @@ export type PaymentMethod = 'card' | 'cash';
 
 #### Класс `Page`
 Компонент для управления основной страницей.
+
+**Конструктор:**
+`constructor(container: HTMLElement, events: IEvents)` - принимает корневой DOM-элемент основной страницы и экземпляр брокера событий (IEvents).
 
 **Поля:**
 - `_counter: HTMLElement` — Элемент счетчика корзины.
@@ -609,6 +661,9 @@ export type PaymentMethod = 'card' | 'cash';
 
 #### Класс `LarekApi`
 Расширяет класс `Api` для взаимодействия с сервером.
+
+**Конструктор:**
+`constructor(cdn: string, baseUrl: string, options: RequestInit = {})` - принимает базовый URL для загрузки изображений (CDN), базовый URL сервера для HTTP-запросов и глобальные опции для всех запросов (опционально).
 
 **Поля:**
 - `cdn: string` — Базовый URL для изображений.

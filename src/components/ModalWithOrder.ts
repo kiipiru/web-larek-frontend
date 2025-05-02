@@ -9,7 +9,6 @@ interface IModalWithOrder extends Partial<IOrder> {
 }
 
 export class ModalWithOrder extends Modal<IModalWithOrder> {
-	protected _modalTitle: HTMLElement;
 	protected _paymentMethod: null | PaymentMethod;
 	protected _paymentByCardButton: HTMLButtonElement;
 	protected _paymentByCashButton: HTMLButtonElement;
@@ -24,10 +23,6 @@ export class ModalWithOrder extends Modal<IModalWithOrder> {
 		orderTemplate: HTMLElement
 	) {
 		super(container, events, orderTemplate);
-		this._modalTitle = ensureElement<HTMLElement>(
-			'.modal__title',
-			this.modalContent
-		);
 		this._orderDataForm =
 			this.modalContent as HTMLFormElement
 		this._paymentByCardButton = ensureElement<HTMLButtonElement>(
@@ -85,10 +80,13 @@ export class ModalWithOrder extends Modal<IModalWithOrder> {
 	get proceedButton(): HTMLButtonElement {
 		return this._proceedButton;
 	}
+	disableProceedButton(state: boolean) {
+        this.setDisabled(this._proceedButton, state)
+    }
 	addActiveClass(button: HTMLButtonElement) {
-		button.classList.add('button_alt-active');
+		this.toggleClass(button, ('button_alt-active'), true);
 	}
 	removeActiveClass(button: HTMLElement) {
-		button.classList.remove('button_alt-active');
+		this.toggleClass(button,('button_alt-active'), false);
 	}
 }

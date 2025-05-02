@@ -32,24 +32,20 @@ export class ItemCard extends Component<IItem> {
     }
 
     set category(category: ItemCategories) {
-        this._category.textContent = category;
-        this._category.classList.add(categoryMapping[category]);
+        this.setText(this._category, category);
+        this.toggleClass(this._category, categoryMapping[category], true);
     }
 
     set title(title: string) {
-        this._title.textContent = title;
+        this.setText(this._title, title);
         this._image.alt = title
     }
 
     set image(imageUrl: string) {
-        this._image.src = imageUrl;
-    }
-
-    set imageAlt(alt: string) {
-        this._image.alt = alt;
+        this.setImage(this._image, imageUrl);
     }
 
     set price(price: number | null) {
-        this._price.textContent = handlePrice   (price);
+        this.setText(this._price, handlePrice(price));
     }
 }

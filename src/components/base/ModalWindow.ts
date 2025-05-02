@@ -23,13 +23,13 @@ export class Modal <T> extends Component<T> {
     }
   
     open() {
-      this.container.classList.add("modal_active");
+      this.toggleClass(this.container, ("modal_active"));
       document.addEventListener("keyup", this.handleEscUp);
       this.events.emit('modal:open')
         }
   
     close() {
-      this.container.classList.remove("modal_active");
+      this.toggleClass(this.container, ("modal_active"));
       document.removeEventListener("keyup", this.handleEscUp);
       this.events.emit('modal:close')
     }
@@ -41,7 +41,7 @@ export class Modal <T> extends Component<T> {
       }
 
     render(data?: Partial<T>):HTMLElement {
-      this.open()
+      if (!this.container.classList.contains("modal_active")) {this.open()}
       this.modalContentContainer.replaceChildren(this.modalContent)
       return super.render(data)
     }

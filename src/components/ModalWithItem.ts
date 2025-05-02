@@ -12,7 +12,6 @@ export class ModalWithItem extends Modal<IItem> {
 	protected _itemPrice: HTMLSpanElement;
 	protected _basketButton: HTMLButtonElement;
 	protected itemId: string;
-	protected _handleBasketButton: Function;
 	constructor(
 		container: HTMLElement,
 		events: IEvents,
@@ -53,11 +52,11 @@ export class ModalWithItem extends Modal<IItem> {
 	}
 
 	set category(category: ItemCategories) {
-		this._itemCategory.textContent = category;
+		this.setText(this._itemCategory, category);
 		Object.values(categoryMapping).forEach((className) => {
-			this._itemCategory.classList.remove(className);
+			this.toggleClass(this._itemCategory, className, false);
 		});
-		this._itemCategory.classList.add(categoryMapping[category]);
+		this.toggleClass(this._itemCategory, categoryMapping[category], true);
 	}
 
 	set title(title: string) {
@@ -71,16 +70,16 @@ export class ModalWithItem extends Modal<IItem> {
 
 	set price(price: number | null) {
 		this.setText(this._itemPrice, handlePrice(price))
-		this._basketButton.disabled = price === null;
+		this.setDisabled(this._basketButton, price === null);
 	}
 	set id(id: string) {
 		this.itemId = id;
+	}
+	set basketButtonText(text: string) {
+		this.setText(this._basketButton, text)
 	}
 	get id(): string {
 		return this.itemId;
 	}
 
-	get basketButton(): HTMLButtonElement {
-		return this._basketButton;
-	}
 }

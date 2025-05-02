@@ -16,12 +16,10 @@ export class ModalWithBasket extends Modal<IItemsData> {
 	protected _itemTitle: HTMLSpanElement;
 	protected _itemPrice: HTMLSpanElement;
 	protected _itemDeleteButton: HTMLButtonElement;
-	protected _modalTitle: HTMLElement;
 	protected _basketList: HTMLUListElement;
 	protected _orderButton: HTMLButtonElement;
 	protected _basketPrice: HTMLSpanElement;
 	protected _items: IItem[];
-	protected _handleDeleteItem: Function;
 	constructor(
 		container: HTMLElement,
 		events: IEvents,
@@ -42,7 +40,7 @@ export class ModalWithBasket extends Modal<IItemsData> {
 			'.basket__button',
 			this.modalContent
 		);
-		this._orderButton.disabled = true;
+		this.setDisabled(this._orderButton, true);
 		this._itemIndex = ensureElement<HTMLSpanElement>(
 			'.basket__item-index',
 			this._cardInBasketTemplate
@@ -59,10 +57,6 @@ export class ModalWithBasket extends Modal<IItemsData> {
 			'.basket__item-delete',
 			this._cardInBasketTemplate
 		);
-		this._modalTitle = ensureElement<HTMLElement>(
-			'.modal__title',
-			this.modalContent
-		);
 		this._orderButton.addEventListener('click', () => {
 			this.events.emit('orderbutton:clicked');
 		});
@@ -75,15 +69,15 @@ export class ModalWithBasket extends Modal<IItemsData> {
 		});
 	}
 
-    get orderButton(): HTMLButtonElement {
-        return this._orderButton
+    disableOrderButton(state: boolean) {
+        this.setDisabled(this._orderButton, state)
     }
 
 	handleTotalPrice(totalPrice: number | null) {
 		if (totalPrice != null) {
-			this._basketPrice.textContent = `${totalPrice} синапсов`;
+			this.setText(this._basketPrice, `${totalPrice} синапсов`);
 		} else {
-			this._basketPrice.textContent = '0 синапсов';
+			this.setText(this._basketPrice, '0 синапсов');
 		}
 	}
 
@@ -110,9 +104,9 @@ export class ModalWithBasket extends Modal<IItemsData> {
 			);
 		});
 		setElementData(cardElement, { id: item.id });
-		itemIndex.textContent = index.toString();
-		itemTitle.textContent = item.title;
-		itemPrice.textContent = handlePrice(item.price);
+		this.setText(itemIndex, index.toString());
+		this.setText(itemTitle, item.title);
+		this.setText(itemPrice, handlePrice(item.price));
 		return cardElement;
 	}
 
@@ -124,7 +118,7 @@ export class ModalWithBasket extends Modal<IItemsData> {
 			const indexEl = el.querySelector(
 				'.basket__item-index'
 			) as HTMLSpanElement;
-			indexEl.textContent = (index + 1).toString();
+			this.setText(indexEl, (index + 1).toString());
 		});
 	}
 }

@@ -9,7 +9,6 @@ interface IModalWithContactInfo extends Partial<IOrder> {
 }
 
 export class ModalWithContactInfo extends Modal<IModalWithContactInfo> {
-	protected _modalTitle: HTMLElement;
 	protected _emailInput: HTMLInputElement;
 	protected _phoneInput: HTMLInputElement;
 	protected _submitOrderButton: HTMLButtonElement;
@@ -20,11 +19,6 @@ export class ModalWithContactInfo extends Modal<IModalWithContactInfo> {
 		orderTemplate: HTMLElement
 	) {
 		super(container, events, orderTemplate);
-
-		this._modalTitle = ensureElement<HTMLElement>(
-			'.modal__title',
-			this.modalContent
-		);
 		this._emailInput = ensureElement<HTMLInputElement>(
 			'input[name="email"]',
 			this.modalContent
@@ -61,7 +55,10 @@ export class ModalWithContactInfo extends Modal<IModalWithContactInfo> {
 	set errorSpan(text: string) {
 		this.setText(this._errorSpan, text);
 	}
+	disableSubmitOrderButton(state: boolean) {
+        this.setDisabled(this._submitOrderButton, state)
+    }
 	getInputs(): HTMLInputElement[] {
-		return [this._emailInput, this._phoneInput]
+		return [this._emailInput, this._phoneInput]	
 	}
 }
